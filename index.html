@@ -1,48 +1,355 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>我的個人首頁</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫學國考複習神器</title>
     <style>
+        /* --- 1. 整體排版設定 (CSS) --- */
         body {
-            font-family: "Helvetica", "Arial", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
-        .card {
-            background-color: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 600px; /* 電腦版最大寬度 */
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             text-align: center;
-            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
-        h1 { color: #333; }
-        p { color: #666; line-height: 1.6; }
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
+
+        h1 { margin: 0 0 10px 0; color: #333; font-size: 1.5rem; }
+        p.subtitle { color: #666; margin-top: 0; font-size: 0.9rem; }
+
+        /* --- 2. 選單區域樣式 --- */
+        #menu-area { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        
+        .menu-btn {
+            background-color: #fff;
+            border: 2px solid #007bff;
+            color: #007bff;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .btn:hover { background-color: #0056b3; }
+        .menu-btn:hover { background-color: #007bff; color: white; transform: translateY(-2px); }
+        .menu-btn:active { transform: translateY(0); }
+
+        /* --- 3. 答題區域樣式 --- */
+        #game-area { display: none; /* 預設隱藏 */ }
+        
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .btn-home { background: #e2e6ea; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; color: #555; }
+        .status-text { font-size: 0.9rem; color: #888; }
+
+        /* 題目顯示區 */
+        #question-display { 
+            min-height: 200px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 20px 0;
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: bold; line-height: 1.5; text-align: left; width: 100%; white-space: pre-wrap; }
+        
+        .q-img { 
+            max-width: 100%; 
+            max-height: 400px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            cursor: pointer; /* 讓圖片看起來可點擊 (如果未來想做放大功能) */
+        }
+        
+        .q-desc { margin-top: 10px; color: #555; font-size: 1rem; }
+
+        /* 輸入與按鈕區 */
+        .input-area { margin-top: 15px; }
+        
+        input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            text-transform: uppercase; /* 強制大寫 */
+        }
+        input[type="text"]:focus { border-color: #007bff; }
+
+        .btn-group { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
+        
+        .btn { padding: 10px 20px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
+        .btn-submit { background-color: #007bff; }
+        .btn-submit:hover { background-color: #0056b3; }
+        .btn-dunno { background-color: #ffc107; color: #333; }
+        .btn-next { background-color: #28a745; display: none; } /* 預設隱藏 */
+
+        /* 結果回饋 */
+        #feedback { margin-top: 20px; font-size: 1.2rem; font-weight: bold; min-height: 30px; }
+        .correct { color: #28a745; }
+        .wrong { color: #dc3545; }
+
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>👋 你好！</h1>
-        <p>歡迎來到我的個人網頁。</p>
-        <p>這是我用 GitHub Pages 建立的第一個網站，其實比想像中簡單很多！</p>
-        <a href="https://github.com/" class="btn">點擊前往我的 GitHub</a>
+<div class="container">
+    <h1>🩺 醫學國考複習</h1>
+    
+    <div id="menu-area">
+        <p class="subtitle">請選擇要練習的科目：</p>
+        <div id="menu-list">
+            </div>
     </div>
+
+    <div id="game-area">
+        <div class="nav-bar">
+            <button class="btn-home" onclick="goHome()">🏠 回選單</button>
+            <span class="status-text" id="progress-text"></span>
+        </div>
+
+        <div id="question-display">
+            </div>
+
+        <div class="input-area">
+            <input type="text" id="answer-input" placeholder="輸入答案 (A/B/C/D)" autocomplete="off">
+            <div class="btn-group">
+                <button class="btn btn-submit" id="btn-submit" onclick="checkAnswer()">送出</button>
+                <button class="btn btn-dunno" id="btn-dunno" onclick="showAnswer()">不知道</button>
+                <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">下一題 ➡</button>
+            </div>
+        </div>
+
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+    // ========================================================
+    // ⚙️ 設定區：請在這裡修改你的題庫檔案
+    // name: 按鈕上顯示的名字
+    // file: 你的 csv 檔名 (必須放在同一層資料夾)
+    // ========================================================
+    const quizList = [
+        { name: "💀 大體解剖學 (Anatomy)", file: "anatomy.csv" },
+        { name: "💊 藥理學 (Pharma)", file: "pharma.csv" },
+        { name: "🦠 微生物 (Microbiology)", file: "micro.csv" },
+        // 如果有新題庫，複製上面格式繼續往下加
+    ];
+    // ========================================================
+
+    let allQuestions = []; // 存放目前讀取到的所有題目
+    let currentQ = null;   // 目前這題的資料
+    let currentIndex = 0;  // 目前題號
+
+    // 1. 初始化：網頁載入時建立選單
+    window.onload = function() {
+        const menuList = document.getElementById('menu-list');
+        
+        quizList.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'menu-btn';
+            btn.innerHTML = item.name; // 支援 emoji
+            btn.onclick = () => loadCSV(item.file);
+            menuList.appendChild(btn);
+        });
+    };
+
+    // 2. 讀取 CSV 檔案
+    async function loadCSV(filename) {
+        // 切換介面
+        document.getElementById('menu-area').style.display = 'none';
+        document.getElementById('game-area').style.display = 'block';
+        document.getElementById('question-display').innerHTML = '<p>載入題庫中...</p>';
+        document.querySelector('h1').style.display = 'none'; // 隱藏大標題以節省空間
+
+        try {
+            // 加上時間戳記 ?t=... 防止瀏覽器快取舊資料
+            const response = await fetch(filename + '?t=' + new Date().getTime());
+            
+            if (!response.ok) throw new Error("找不到檔案");
+            const text = await response.text();
+            
+            parseCSV(text);
+        } catch (err) {
+            alert(`❌ 讀取失敗：找不到 ${filename}\n請確認檔案名稱正確且已上傳 GitHub。`);
+            goHome();
+        }
+    }
+
+    // 3. 解析 CSV 內容
+    function parseCSV(text) {
+        allQuestions = [];
+        const lines = text.split('\n');
+
+        lines.forEach(line => {
+            // 簡單處理 CSV: 假設沒有引號包覆的複雜狀況
+            // 移除前後空白
+            line = line.trim(); 
+            if (!line) return; // 跳過空行
+
+            const parts = line.split(',');
+            if (parts.length >= 3) {
+                // parts[0]: 類型 (text/image)
+                // parts[1]: 內容 (文字敘述 或 圖片檔名)
+                // parts[2]: 答案
+                allQuestions.push({
+                    type: parts[0].trim(),
+                    content: parts[1].trim(),
+                    answer: parts[2].trim()
+                });
+            }
+        });
+
+        if (allQuestions.length === 0) {
+            alert("題庫是空的！");
+            goHome();
+            return;
+        }
+
+        // 洗牌 (Shuffle)
+        allQuestions.sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        nextQuestion();
+    }
+
+    // 4. 顯示下一題
+    function nextQuestion() {
+        // 如果題目做完了，重新循環
+        if (currentIndex >= allQuestions.length) {
+            alert("題目已做完，將重新開始！");
+            currentIndex = 0;
+            allQuestions.sort(() => Math.random() - 0.5);
+        }
+
+        currentQ = allQuestions[currentIndex];
+        currentIndex++;
+
+        // 更新進度
+        document.getElementById('progress-text').innerText = `進度: ${currentIndex} / ${allQuestions.length}`;
+        
+        // 重置介面
+        document.getElementById('feedback').innerText = '';
+        document.getElementById('feedback').className = '';
+        
+        const input = document.getElementById('answer-input');
+        input.value = '';
+        input.disabled = false;
+        input.focus();
+
+        // 按鈕狀態重置
+        document.getElementById('btn-submit').style.display = 'inline-block';
+        document.getElementById('btn-dunno').style.display = 'inline-block';
+        document.getElementById('btn-next').style.display = 'none';
+
+        // 渲染題目
+        renderQuestionContent();
+    }
+
+    function renderQuestionContent() {
+        const display = document.getElementById('question-display');
+        display.innerHTML = '';
+
+        if (currentQ.type === 'text') {
+            // 文字題：處理 \n 換行
+            const textContent = currentQ.content.replace(/\\n/g, '\n');
+            display.innerHTML = `<div class="q-text">${textContent}</div>`;
+        } else {
+            // 圖片題：處理路徑
+            // 檢查 content 是否包含 '|' (如果有文字敘述)
+            let imgName = currentQ.content;
+            let desc = "";
+
+            if (imgName.includes('|')) {
+                const parts = imgName.split('|');
+                imgName = parts[0];
+                desc = parts[1];
+            }
+
+            // ⚠️ 關鍵：自動補上 images/ 路徑
+            const imgPath = `images/${imgName}`;
+
+            let html = `<img src="${imgPath}" class="q-img" onerror="this.src=''; this.alt='❌ 圖片載入失敗 (${imgName})'">`;
+            if (desc) {
+                html += `<div class="q-desc">${desc}</div>`;
+            }
+            display.innerHTML = html;
+        }
+    }
+
+    // 5. 檢查答案
+    function checkAnswer() {
+        const input = document.getElementById('answer-input');
+        const userAns = input.value.trim().toUpperCase();
+        const correctAns = currentQ.answer.trim().toUpperCase();
+        const feedback = document.getElementById('feedback');
+
+        if (!userAns) return; // 沒填不動作
+
+        if (userAns === correctAns) {
+            feedback.innerText = `✅ 答對！答案是 ${correctAns}`;
+            feedback.className = 'correct';
+            endRound(); // 答對直接結束這回合
+        } else {
+            feedback.innerText = `❌ 錯誤... 再試一次`;
+            feedback.className = 'wrong';
+            input.value = ''; // 清空讓使用者重打
+            input.focus();
+        }
+    }
+
+    // 6. 不知道/看答案
+    function showAnswer() {
+        const feedback = document.getElementById('feedback');
+        feedback.innerText = `💡 正確答案是：${currentQ.answer}`;
+        feedback.className = 'wrong'; // 用紅色顯示
+        endRound();
+    }
+
+    // 7. 回合結束 (鎖定輸入)
+    function endRound() {
+        document.getElementById('answer-input').disabled = true;
+        document.getElementById('btn-submit').style.display = 'none';
+        document.getElementById('btn-dunno').style.display = 'none';
+        
+        // 顯示下一題按鈕並聚焦
+        const nextBtn = document.getElementById('btn-next');
+        nextBtn.style.display = 'inline-block';
+        nextBtn.focus();
+    }
+
+    // 8. 回首頁
+    function goHome() {
+        document.getElementById('game-area').style.display = 'none';
+        document.getElementById('menu-area').style.display = 'flex';
+        document.querySelector('h1').style.display = 'block';
+    }
+
+    // 鍵盤支援 (Enter 送出)
+    document.getElementById('answer-input').addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            checkAnswer();
+        }
+    });
+
+</script>
 
 </body>
 </html>
