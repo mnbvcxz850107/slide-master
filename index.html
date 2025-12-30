@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>醫學國考複習神器 (Pro版)</title>
+    <title>跑台練習</title>
     <style>
-        /* --- 1. 整體排版 (CSS) --- */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
@@ -20,119 +19,86 @@
             background: white;
             width: 100%;
             max-width: 600px;
-            padding: 25px;
+            padding: 30px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             text-align: center;
             display: flex;
             flex-direction: column;
+            position: relative;
+            margin-top: 20px; 
         }
 
-        h1 { margin: 0 0 10px 0; color: #333; font-size: 1.5rem; }
-        p.subtitle { color: #666; margin-top: 0; font-size: 0.9rem; }
+        h1 { margin: 0 0 20px 0; color: #333; font-size: 1.5rem; }
 
-        /* --- 選單區域 --- */
-        #menu-area { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .menu-btn {
-            background-color: #fff;
-            border: 2px solid #007bff;
-            color: #007bff;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .watermark {
+            position: fixed;
+            bottom: 15px;
+            left: 20px;
+            font-size: 0.8rem;
+            color: #d1d5db;
+            font-family: sans-serif;
+            user-select: none;
+            pointer-events: none;
         }
-        .menu-btn:hover { background-color: #007bff; color: white; transform: translateY(-2px); }
 
-        /* --- 答題區域 --- */
-        #game-area { display: none; }
-        
-        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .btn-home { background: #e2e6ea; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; color: #555; }
-        .status-text { font-size: 0.9rem; color: #888; }
-
-        /* 題目顯示 */
-        #question-display { 
-            min-height: 150px; 
+        .nav-bar { 
             display: flex; 
-            flex-direction: column; 
+            justify-content: flex-end; 
             align-items: center; 
-            justify-content: center; 
-            margin: 20px 0;
+            margin-bottom: 15px; 
+            color: #666; 
+            font-size: 0.9rem; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 10px; 
         }
-        .q-text { font-size: 1.3rem; font-weight: bold; line-height: 1.5; text-align: left; width: 100%; white-space: pre-wrap; }
+        
+        #question-display { min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px 0; }
+        .q-text { font-size: 1.4rem; font-weight: bold; white-space: pre-wrap; text-align: left; width: 100%; }
         .q-img { max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .q-desc { margin-top: 10px; color: #555; font-size: 1rem; }
+        .q-desc { margin-top: 10px; color: #555; }
 
-        /* 正常回答區 */
-        .input-area { margin-top: 15px; }
+        .ans-input-area { margin-top: 20px; }
         input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-            text-transform: uppercase;
+            width: 70%; padding: 12px; font-size: 1.1rem;
+            border: 2px solid #ddd; border-radius: 8px; outline: none; text-align: center;
         }
         input[type="text"]:focus { border-color: #007bff; }
-        
-        /* 練習輸入框 (答錯時才出現) */
-        #practice-input {
-            border-color: #ffcccb; /* 預設淡紅色框 */
-            color: red; /* 預設紅字 */
-        }
-        #practice-input.correct-practice {
-            border-color: #28a745 !important;
-            color: green !important;
-        }
 
-        /* 按鈕群組 */
-        .btn-group { margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn { padding: 10px 20px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
+        .btn-group { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+        .btn { padding: 10px 25px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
         .btn-submit { background-color: #007bff; }
         .btn-dunno { background-color: #ffc107; color: #333; }
-        
-        /* 評估按鈕 (類似 Python 版) */
-        .assess-btn-group { display: none; margin-top: 10px; justify-content: center; gap: 8px; }
-        .btn-clear { background-color: #28a745; } /* 綠 */
-        .btn-vague { background-color: #ffc107; color: black; } /* 黃 */
-        .btn-forgot { background-color: #dc3545; } /* 紅 */
 
-        /* 結果回饋 */
+        #practice-area { display: none; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px; }
+        #practice-input { border-color: #ffcccb; color: red; }
+        #practice-input.correct { border-color: #28a745 !important; color: green !important; }
+        
         #feedback { margin-top: 15px; font-size: 1.3rem; font-weight: bold; min-height: 30px; }
         .correct-msg { color: #28a745; }
         .wrong-msg { color: #dc3545; }
 
-        /* 練習區塊 */
-        #practice-area { display: none; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px; }
-        .practice-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; display: block; }
-
+        .assess-group { display: none; gap: 8px; justify-content: center; margin-top: 10px; }
+        .btn-assess { padding: 8px 15px; font-size: 0.9rem; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        
     </style>
 </head>
 <body>
 
+<div class="watermark">© 2025 Ryan</div>
+
 <div class="container">
-    <h1 id="app-title">🩺 國考複習神器</h1>
-    
-    <div id="menu-area">
-        <p class="subtitle">請選擇要練習的科目：</p>
-        <div id="menu-list"></div>
-    </div>
+    <h1 id="app-title">切片練習</h1>
 
     <div id="game-area">
         <div class="nav-bar">
-            <button class="btn-home" onclick="goHome()">🏠 回選單</button>
-            <span class="status-text" id="progress-text"></span>
+            <span id="progress-text">準備載入...</span>
         </div>
 
-        <div id="question-display"></div>
+        <div id="question-display">載入題庫中...</div>
 
-        <div class="input-area" id="main-input-area">
-            <input type="text" id="answer-input" placeholder="輸入答案 (A/B/C/D)" autocomplete="off">
+        <div class="ans-input-area" id="main-input-wrapper">
+            <input type="text" id="answer-input" placeholder="輸入答案 (Enter)" autocomplete="off">
             <div class="btn-group">
                 <button class="btn btn-submit" id="btn-submit" onclick="checkAnswer()">送出</button>
                 <button class="btn btn-dunno" id="btn-dunno" onclick="showAnswer()">不知道</button>
@@ -142,71 +108,56 @@
         <div id="feedback"></div>
 
         <div id="practice-area">
-            <label class="practice-label">👇 練習輸入正確答案：</label>
-            <input type="text" id="practice-input" placeholder="請在此輸入正確答案..." autocomplete="off">
-            
-            <div class="assess-btn-group" id="assess-buttons">
-                <button class="btn btn-clear" onclick="assess('clear')">🟢 記住了</button>
-                <button class="btn btn-vague" onclick="assess('vague')">🟡 模糊 (稍後再問)</button>
-                <button class="btn btn-forgot" onclick="assess('forgot')">🔴 忘記 (重問)</button>
+            <p style="font-size:0.9rem; color:#666; margin:5px 0;">👇 練習輸入正確答案 (可略)：</p>
+            <input type="text" id="practice-input" placeholder="輸入正確答案..." autocomplete="off">
+            <div class="assess-group" id="assess-buttons">
+                <button class="btn-assess" style="background:#28a745" onclick="assess('clear')">🟢 記住了</button>
+                <button class="btn-assess" style="background:#ffc107; color:black" onclick="assess('vague')">🟡 模糊 (+3)</button>
+                <button class="btn-assess" style="background:#dc3545" onclick="assess('forgot')">🔴 忘記 (加強)</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========================================================
-    // ⚙️ 設定區：請在這裡修改你的題庫檔案
-    // ========================================================
-    const quizList = [
-        { name: "💀 大體解剖學", file: "anatomy.csv" },
-        { name: "💊 藥理學", file: "pharma.csv" },
-        { name: "🦠 微生物", file: "micro.csv" },
-        // 在這裡依樣畫葫蘆新增...
-    ];
-    // ========================================================
-
+    const CSV_FILE = "anatomy.csv"; 
+    
     let allQuestions = [];
     let currentQ = null;
     let currentIndex = 0;
 
-    // 網頁載入
     window.onload = function() {
-        const menuList = document.getElementById('menu-list');
-        quizList.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = 'menu-btn';
-            btn.innerHTML = item.name;
-            btn.onclick = () => loadCSV(item.file);
-            menuList.appendChild(btn);
+        loadCSV();
+
+        document.getElementById('answer-input').addEventListener("keypress", function(e) {
+            if(e.key === "Enter") {
+                if(this.value.trim() === "") showAnswer(); 
+                else checkAnswer(); 
+            }
         });
         
-        // 綁定 Enter 鍵邏輯
-        document.getElementById('answer-input').addEventListener("keypress", function(e) {
-            if (e.key === "Enter") checkAnswer();
+        const pInput = document.getElementById('practice-input');
+        pInput.addEventListener("input", function(e) {
+            if(currentQ && e.target.value.trim().toUpperCase() === currentQ.answer.toUpperCase()) {
+                e.target.className = 'correct';
+            } else {
+                e.target.className = '';
+            }
         });
-
-        // 綁定練習輸入框的變色邏輯
-        document.getElementById('practice-input').addEventListener("input", function(e) {
-            checkPracticeInput(e.target.value);
+        pInput.addEventListener("keypress", function(e) {
+            if(e.key === "Enter") assess('forgot');
         });
     };
 
-    // 載入 CSV
-    async function loadCSV(filename) {
-        document.getElementById('menu-area').style.display = 'none';
-        document.getElementById('game-area').style.display = 'block';
-        document.getElementById('app-title').style.display = 'none';
-        document.getElementById('question-display').innerHTML = '<p>載入題庫中...</p>';
-
+    async function loadCSV() {
         try {
-            const response = await fetch(filename + '?t=' + new Date().getTime());
-            if (!response.ok) throw new Error("找不到檔案");
-            const text = await response.text();
+            const res = await fetch(CSV_FILE + '?t=' + Date.now());
+            if(!res.ok) throw new Error("File not found");
+            const text = await res.text();
             parseCSV(text);
-        } catch (err) {
-            alert("讀取失敗，請確認檔案名稱是否正確。");
-            goHome();
+        } catch(err) {
+            alert("讀取題庫失敗，請確認 " + CSV_FILE + " 是否存在。");
+            document.getElementById('question-display').innerHTML = "❌ 載入失敗";
         }
     }
 
@@ -215,10 +166,9 @@
         const lines = text.split('\n');
         lines.forEach(line => {
             line = line.trim();
-            if (!line) return;
-            // 處理可能有逗號的內容 (簡單版)
+            if(!line) return;
             const parts = line.split(',');
-            if (parts.length >= 3) {
+            if(parts.length >= 3) {
                 allQuestions.push({
                     type: parts[0].trim(),
                     content: parts[1].trim(),
@@ -227,162 +177,113 @@
             }
         });
 
-        if (allQuestions.length === 0) {
+        if(allQuestions.length === 0) {
             alert("題庫是空的！");
-            goHome();
             return;
         }
 
-        // 洗牌
-        allQuestions.sort(() => Math.random() - 0.5);
         currentIndex = 0;
+        allQuestions.sort(() => Math.random() - 0.5); 
+        
         nextQuestion();
     }
 
-    // 顯示下一題
     function nextQuestion() {
-        if (currentIndex >= allQuestions.length) {
-            alert("題目做完了！將重新開始。");
-            currentIndex = 0;
-            allQuestions.sort(() => Math.random() - 0.5);
+        if(currentIndex >= allQuestions.length) {
+            alert("🎉 恭喜！題目全部做完了！\n網頁將重新載入...");
+            location.reload(); 
+            return;
         }
 
         currentQ = allQuestions[currentIndex];
-        
-        // 更新進度條
+
         document.getElementById('progress-text').innerText = `進度: ${currentIndex + 1} / ${allQuestions.length}`;
-        
-        // 重置介面
         resetUI();
 
-        // 渲染題目
         const display = document.getElementById('question-display');
         display.innerHTML = '';
-
-        if (currentQ.type === 'text') {
-            const textContent = currentQ.content.replace(/\\n/g, '\n');
-            display.innerHTML = `<div class="q-text">${textContent}</div>`;
+        if(currentQ.type === 'text') {
+            display.innerHTML = `<div class="q-text">${currentQ.content.replace(/\\n/g, '\n')}</div>`;
         } else {
             let imgName = currentQ.content;
             let desc = "";
-            if (imgName.includes('|')) {
+            if(imgName.includes('|')) {
                 const parts = imgName.split('|');
                 imgName = parts[0];
                 desc = parts[1];
             }
-            // 自動補路徑
-            const imgPath = `images/${imgName}`;
-            let html = `<img src="${imgPath}" class="q-img" onerror="this.src=''; this.alt='❌ 圖片載入失敗 (${imgName})'">`;
-            if (desc) html += `<div class="q-desc">${desc}</div>`;
-            display.innerHTML = html;
+            display.innerHTML = `<img src="images/${imgName}" class="q-img" onerror="this.src=''; this.alt='圖片載入失敗'"><div class="q-desc">${desc}</div>`;
         }
     }
 
-    // 檢查答案 (按送出時)
     function checkAnswer() {
         const input = document.getElementById('answer-input');
-        const userAns = input.value.trim().toUpperCase();
-        const correctAns = currentQ.answer.trim().toUpperCase();
+        const val = input.value.trim().toUpperCase();
+        const ans = currentQ.answer.trim().toUpperCase();
         const feedback = document.getElementById('feedback');
 
-        if (!userAns) return;
+        if(!val) return;
 
-        if (userAns === correctAns) {
-            // ✅ 答對：顯示綠色，0.8秒後自動下一題 (模仿 Python)
-            feedback.innerText = `✅ 答對！答案是 ${correctAns}`;
-            feedback.className = 'correct-msg';
+        if(val === ans) {
+            feedback.innerText = `✅ 答對！答案是 ${currentQ.answer}`;
+            feedback.className = "correct-msg";
             input.disabled = true;
+
             setTimeout(() => {
                 currentIndex++;
                 nextQuestion();
             }, 800);
         } else {
-            // ❌ 答錯：進入「練習模式」
-            feedback.innerText = `❌ 錯誤！正確答案是：${correctAns}`;
-            feedback.className = 'wrong-msg';
+            feedback.innerText = `❌ 錯誤！答案是 ${ans}`;
+            feedback.className = "wrong-msg";
             enterPracticeMode();
         }
     }
 
-    // 不知道 (直接看答案)
     function showAnswer() {
         const feedback = document.getElementById('feedback');
-        feedback.innerText = `💡 正確答案是：${currentQ.answer}`;
-        feedback.className = 'wrong-msg';
+        feedback.innerText = `💡 答案是 ${currentQ.answer}`;
+        feedback.className = "wrong-msg";
         enterPracticeMode();
     }
 
-    // 進入練習模式 (鎖定原本輸入，開啟下方練習區)
     function enterPracticeMode() {
-        // 1. 鎖定上方
         document.getElementById('answer-input').disabled = true;
         document.getElementById('btn-submit').style.display = 'none';
         document.getElementById('btn-dunno').style.display = 'none';
-
-        // 2. 開啟下方
+        
         document.getElementById('practice-area').style.display = 'block';
         document.getElementById('assess-buttons').style.display = 'flex';
         
-        // 3. 聚焦到練習輸入框
         const pInput = document.getElementById('practice-input');
         pInput.value = '';
-        pInput.className = ''; // 重置顏色
+        pInput.className = '';
         pInput.focus();
     }
 
-    // 練習輸入框的變色邏輯 (即時比對)
-    function checkPracticeInput(val) {
-        const correctAns = currentQ.answer.trim().toUpperCase();
-        const pInput = document.getElementById('practice-input');
-        
-        // 如果輸入內容(轉大寫)跟答案一樣，變綠色
-        if (val.trim().toUpperCase() === correctAns) {
-            pInput.className = 'correct-practice';
-        } else {
-            pInput.className = '';
-        }
-    }
-
-    // 評估按鈕 (決定這題何時再出現)
-    // 模仿 Python 的 logic: Vague 插入後面一點, Forgot 插入更後面
-    function assess(level) {
-        // 1. 先把題目往後塞
-        if (level === 'vague') {
-            // 插在目前位置 + 3 的地方
+    function assess(type) {
+        if(type === 'vague') {
             allQuestions.splice(currentIndex + 3, 0, currentQ);
-        } else if (level === 'forgot') {
-            // 插在目前位置 + 8 的地方 (或是最後面)
-            allQuestions.splice(currentIndex + 8, 0, currentQ);
+        } else if(type === 'forgot') {
+            allQuestions.push(currentQ); 
+            allQuestions.splice(currentIndex + 10, 0, currentQ);
+            allQuestions.splice(currentIndex + 3, 0, currentQ);
         }
-        // level === 'clear' 就不做任何事，直接下一題
-
-        // 2. 移動指標並換題
         currentIndex++;
         nextQuestion();
     }
 
     function resetUI() {
-        // 清空回饋
         document.getElementById('feedback').innerText = '';
         document.getElementById('feedback').className = '';
-        
-        // 重置主輸入框
         const input = document.getElementById('answer-input');
         input.value = '';
         input.disabled = false;
         input.focus();
         document.getElementById('btn-submit').style.display = 'block';
         document.getElementById('btn-dunno').style.display = 'block';
-
-        // 隱藏練習區
         document.getElementById('practice-area').style.display = 'none';
         document.getElementById('assess-buttons').style.display = 'none';
-    }
-
-    function goHome() {
-        document.getElementById('game-area').style.display = 'none';
-        document.getElementById('menu-area').style.display = 'flex';
-        document.getElementById('app-title').style.display = 'block';
     }
 
 </script>
