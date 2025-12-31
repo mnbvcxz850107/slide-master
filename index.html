@@ -32,20 +32,23 @@
             position: relative;
             border: 1px solid #333;
             box-sizing: border-box;
+            /* 避免卡片太貼近底部浮水印 */
+            margin-bottom: 40px; 
         }
 
         h1 { margin: 0 0 20px 0; color: #ffffff; font-size: 1.5rem; }
 
+        /* --- 署名 (改回左下角固定) --- */
         .watermark {
-            margin-top: 25px;
-            text-align: center;
-            width: 100%;
+            position: fixed;
+            bottom: 15px;
+            left: 20px;
             font-size: 0.8rem;
             color: #444;
             font-family: sans-serif;
             user-select: none;
             pointer-events: none;
-            padding-bottom: 10px;
+            z-index: 10; /* 確保不會被蓋在下面 */
         }
 
         .nav-bar { 
@@ -96,6 +99,8 @@
 </head>
 <body>
 
+<div class="watermark">© 2025 Ryan</div>
+
 <div class="container">
     <h1 id="app-title">切片練習</h1>
 
@@ -127,8 +132,6 @@
         </div>
     </div>
 </div>
-
-<div class="watermark">© 2025 Ryan</div>
 
 <script>
     const CSV_FILE = "anatomy.csv"; 
