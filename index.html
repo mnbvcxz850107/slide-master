@@ -2,47 +2,50 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>跑台練習</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>切片練習</title>
     <style>
-        /* --- 暗黑風格 CSS --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212; /* 背景極深灰 */
-            color: #e0e0e0; /* 字體淺灰 */
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
             padding: 20px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
-            background: #1e1e1e; /* 卡片深灰色 */
+            background: #1e1e1e;
             width: 100%;
             max-width: 600px;
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5); /* 陰影加深 */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             text-align: center;
             display: flex;
             flex-direction: column;
             position: relative;
-            margin-top: 20px; 
-            border: 1px solid #333; /* 微弱邊框 */
+            border: 1px solid #333;
+            box-sizing: border-box;
         }
 
         h1 { margin: 0 0 20px 0; color: #ffffff; font-size: 1.5rem; }
 
         .watermark {
-            position: fixed;
-            bottom: 15px;
-            left: 20px;
+            margin-top: 25px;
+            text-align: center;
+            width: 100%;
             font-size: 0.8rem;
-            color: #444; /* 深灰色浮水印，不刺眼 */
+            color: #444;
             font-family: sans-serif;
             user-select: none;
             pointer-events: none;
+            padding-bottom: 10px;
         }
 
         .nav-bar { 
@@ -50,9 +53,9 @@
             justify-content: flex-end; 
             align-items: center; 
             margin-bottom: 15px; 
-            color: #aaa; /* 淺灰字 */
+            color: #aaa; 
             font-size: 0.9rem; 
-            border-bottom: 1px solid #333; /* 深色分隔線 */
+            border-bottom: 1px solid #333; 
             padding-bottom: 10px; 
         }
         
@@ -64,8 +67,8 @@
         .ans-input-area { margin-top: 20px; }
         input[type="text"] {
             width: 70%; padding: 12px; font-size: 1.1rem;
-            background-color: #2d2d2d; /* 輸入框深色背景 */
-            color: #fff; /* 輸入文字白色 */
+            background-color: #2d2d2d;
+            color: #fff;
             border: 2px solid #444; 
             border-radius: 8px; outline: none; text-align: center;
         }
@@ -73,18 +76,18 @@
 
         .btn-group { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .btn { padding: 10px 25px; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
-        .btn-submit { background-color: #0a84ff; } /* 蘋果藍 */
+        .btn-submit { background-color: #0a84ff; }
         .btn-submit:hover { background-color: #0077e6; }
-        .btn-dunno { background-color: #ff9f0a; color: #222; } /* 蘋果橘 */
+        .btn-dunno { background-color: #ff9f0a; color: #222; }
         .btn-dunno:hover { background-color: #e68d00; }
 
         #practice-area { display: none; margin-top: 20px; border-top: 1px dashed #444; padding-top: 15px; }
-        #practice-input { border-color: #555; color: #ff453a; } /* 預設紅字 */
-        #practice-input.correct { border-color: #30d158 !important; color: #30d158 !important; } /* 綠字 */
+        #practice-input { border-color: #555; color: #ff453a; }
+        #practice-input.correct { border-color: #30d158 !important; color: #30d158 !important; }
         
         #feedback { margin-top: 15px; font-size: 1.3rem; font-weight: bold; min-height: 30px; }
-        .correct-msg { color: #30d158; } /* 亮綠色 */
-        .wrong-msg { color: #ff453a; } /* 亮紅色 */
+        .correct-msg { color: #30d158; }
+        .wrong-msg { color: #ff453a; }
 
         .assess-group { display: none; gap: 8px; justify-content: center; margin-top: 10px; }
         .btn-assess { padding: 8px 15px; font-size: 0.9rem; color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -92,8 +95,6 @@
     </style>
 </head>
 <body>
-
-<div class="watermark">© 2025 Ryan</div>
 
 <div class="container">
     <h1 id="app-title">切片練習</h1>
@@ -126,6 +127,8 @@
         </div>
     </div>
 </div>
+
+<div class="watermark">© 2025 Ryan</div>
 
 <script>
     const CSV_FILE = "anatomy.csv"; 
