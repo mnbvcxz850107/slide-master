@@ -32,13 +32,11 @@
             position: relative;
             border: 1px solid #333;
             box-sizing: border-box;
-            /* 避免卡片太貼近底部浮水印 */
             margin-bottom: 40px; 
         }
 
         h1 { margin: 0 0 20px 0; color: #ffffff; font-size: 1.5rem; }
 
-        /* --- 署名 (改回左下角固定) --- */
         .watermark {
             position: fixed;
             bottom: 15px;
@@ -48,7 +46,7 @@
             font-family: sans-serif;
             user-select: none;
             pointer-events: none;
-            z-index: 10; /* 確保不會被蓋在下面 */
+            z-index: 10;
         }
 
         .nav-bar { 
@@ -66,6 +64,24 @@
         .q-text { font-size: 1.4rem; font-weight: bold; white-space: pre-wrap; text-align: left; width: 100%; color: #eee; }
         .q-img { max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .q-desc { margin-top: 10px; color: #bbb; }
+
+        /* --- 新增：圖片刷新按鈕樣式 --- */
+        .btn-reload-img {
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid #444;
+            color: #777;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-reload-img:hover {
+            border-color: #666;
+            color: #aaa;
+            background: #2a2a2a;
+        }
 
         .ans-input-area { margin-top: 20px; }
         input[type="text"] {
@@ -226,7 +242,24 @@
                 imgName = parts[0];
                 desc = parts[1];
             }
-            display.innerHTML = `<img src="images/${imgName}" class="q-img" onerror="this.src=''; this.alt='圖片載入失敗'"><div class="q-desc">${desc}</div>`;
+            // 這裡新增了圖片ID (q-image) 和 刷新按鈕
+            let html = `<img id="q-image" src="images/${imgName}" class="q-img" onerror="this.src=''; this.alt='圖片載入失敗'">`;
+            
+            // 加入刷新按鈕
+            html += `<button class="btn-reload-img" onclick="reloadImage()">🔄 圖片沒跑出來，按這個刷新</button>`;
+            
+            if(desc) html += `<div class="q-desc">${desc}</div>`;
+            display.innerHTML = html;
+        }
+    }
+
+    // 新增：圖片刷新功能
+    function reloadImage() {
+        const img = document.getElementById('q-image');
+        if(img) {
+            // 透過加一個隨機的時間參數，強迫瀏覽器重新下載圖片
+            let src = img.src.split('?')[0]; 
+            img.src = src + '?t=' + new Date().getTime();
         }
     }
 
